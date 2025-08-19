@@ -1,101 +1,74 @@
-import Image from "next/image";
+import Link from 'next/link'
+import { Activity } from 'lucide-react'
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-blue-50">
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center">
+          <div className="flex justify-center mb-8">
+            <div className="bg-emerald-600 p-4 rounded-full">
+              <Activity className="h-12 w-12 text-white" />
+            </div>
+          </div>
+          
+          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+            Blood Sugar Tracker
+          </h1>
+          
+          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+            Take control of your health with smart blood sugar monitoring, 
+            automated reminders, and insightful analytics.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/register"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors shadow-lg"
+            >
+              Get Started
+            </Link>
+            <Link
+              href="/login"
+              className="bg-white hover:bg-gray-50 text-emerald-600 border-2 border-emerald-600 px-8 py-4 rounded-lg text-lg font-semibold transition-colors shadow-lg"
+            >
+              Sign In
+            </Link>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        
+        <div className="mt-20 grid md:grid-cols-3 gap-8">
+          <div className="bg-white p-8 rounded-xl shadow-lg">
+            <div className="bg-emerald-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+              <Activity className="h-6 w-6 text-emerald-600" />
+            </div>
+            <h3 className="text-xl font-semibold mb-3">Quick Entry</h3>
+            <p className="text-gray-600">
+              Log your readings in seconds with preset buttons and smart reminders
+            </p>
+          </div>
+          
+          <div className="bg-white p-8 rounded-xl shadow-lg">
+            <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+              <Activity className="h-6 w-6 text-blue-600" />
+            </div>
+            <h3 className="text-xl font-semibold mb-3">Smart Reminders</h3>
+            <p className="text-gray-600">
+              Never miss a reading with customizable notifications and meal tracking
+            </p>
+          </div>
+          
+          <div className="bg-white p-8 rounded-xl shadow-lg">
+            <div className="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+              <Activity className="h-6 w-6 text-purple-600" />
+            </div>
+            <h3 className="text-xl font-semibold mb-3">Insights</h3>
+            <p className="text-gray-600">
+              Visualize patterns and trends to better understand your health
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
