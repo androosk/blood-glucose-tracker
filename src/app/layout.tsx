@@ -17,12 +17,13 @@ export const metadata: Metadata = {
   title: "Blood Sugar Tracker",
   description: "Track blood sugar levels with reminders",
   manifest: "/manifest.json",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
   themeColor: "#10b981",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
 };
 
 export default function RootLayout({
