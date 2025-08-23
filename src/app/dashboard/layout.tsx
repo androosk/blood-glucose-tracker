@@ -4,6 +4,10 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
+import NotificationPrompt from '@/components/notifications/NotificationPrompt'
+import { reminderService } from '@/lib/notifications/reminder-service'
+import { Settings } from 'lucide-react'
+import Link from 'next/link'
 
 export default function DashboardLayout({
   children,
@@ -23,6 +27,13 @@ export default function DashboardLayout({
       
       if (!session) {
         router.push('/login')
+      } else {
+        // Initialize reminder service when user is authenticated
+        try {
+          await reminderService.initializeReminders()
+        } catch (error) {
+          console.warn('Failed to initialize reminders:', error)
+        }
       }
     }
 
@@ -34,6 +45,9 @@ export default function DashboardLayout({
       setUser(session?.user ?? null)
       if (event === 'SIGNED_OUT') {
         router.push('/login')
+      } else if (event === 'SIGNED_IN' && session) {
+        // Initialize reminders on sign in
+        reminderService.initializeReminders().catch(console.warn)
       }
     })
 
@@ -58,6 +72,7 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <NotificationPrompt />
       <nav className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -70,6 +85,13 @@ export default function DashboardLayout({
               <span className="text-sm text-gray-700">
                 Welcome, {user.user_metadata?.full_name || user.email}
               </span>
+              <Link
+                href="/dashboard/settings"
+                className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                title="Settings"
+              >
+                <Settings className="h-5 w-5" />
+              </Link>
               <button
                 onClick={handleSignOut}
                 className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium"
