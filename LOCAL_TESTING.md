@@ -97,6 +97,21 @@ CREATE POLICY "Users can view own subscriptions" ON notification_subscriptions F
 CREATE POLICY "Users can insert own subscriptions" ON notification_subscriptions FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own subscriptions" ON notification_subscriptions FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete own subscriptions" ON notification_subscriptions FOR DELETE USING (auth.uid() = user_id);
+
+-- Create a trigger to automatically create profile when user signs up
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, full_name)
+  VALUES (NEW.id, NEW.email, NEW.raw_user_meta_data->>'full_name');
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger the function every time a user is created
+CREATE OR REPLACE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 ```
 
 ### 3. Environment Variables

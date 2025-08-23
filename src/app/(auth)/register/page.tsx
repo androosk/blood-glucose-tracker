@@ -33,21 +33,8 @@ export default function RegisterPage() {
       setError(error.message)
       setLoading(false)
     } else if (data.user) {
-      // Create profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: data.user.id,
-          email: data.user.email!,
-          full_name: fullName,
-        })
-
-      if (profileError) {
-        setError(profileError.message)
-        setLoading(false)
-      } else {
-        router.push('/dashboard')
-      }
+      // Profile will be created automatically by database trigger
+      router.push('/dashboard')
     }
   }
 
