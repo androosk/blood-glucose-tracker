@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/database'
-import { Plus } from 'lucide-react'
+import { Plus, Edit2, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 
 type Reading = Database['public']['Tables']['readings']['Row']
@@ -53,6 +53,45 @@ export default function DashboardPage() {
     })
   }
 
+  const formatReadingType = (type: string) => {
+    const typeMap: Record<string, string> = {
+      'fasting': 'Fasting',
+      'pre_meal': 'Pre-meal',
+      'post_30': '30min post-meal',
+      'post_90': '90min post-meal',
+      'random': 'Random'
+    }
+    return typeMap[type] || type
+  }
+
+  const getReadingStats = () => {
+    if (readings.length === 0) return null
+    
+    const values = readings.map(r => r.value)
+    const avg = Math.round(values.reduce((sum, val) => sum + val, 0) / values.length)
+    const min = Math.min(...values)
+    const max = Math.max(...values)
+    
+    return { avg, min, max, count: readings.length }
+  }
+
+  const stats = getReadingStats()
+
+  const handleDelete = async (readingId: string) => {
+    if (!confirm('Are you sure you want to delete this reading?')) return
+    
+    const { error } = await supabase
+      .from('readings')
+      .delete()
+      .eq('id', readingId)
+    
+    if (error) {
+      alert('Failed to delete reading')
+    } else {
+      setReadings(readings.filter(r => r.id !== readingId))
+    }
+  }
+
   if (loading) {
     return <div className="text-center">Loading today&apos;s readings...</div>
   }
@@ -69,6 +108,33 @@ export default function DashboardPage() {
           Add Reading
         </Link>
       </div>
+
+      {stats && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white p-4 rounded-lg shadow">
+            <div className="text-sm text-gray-500">Today&apos;s Average</div>
+            <div className={`text-2xl font-bold ${getReadingColor(stats.avg).split(' ')[0]}`}>
+              {stats.avg}
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <div className="text-sm text-gray-500">Lowest</div>
+            <div className={`text-2xl font-bold ${getReadingColor(stats.min).split(' ')[0]}`}>
+              {stats.min}
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <div className="text-sm text-gray-500">Highest</div>
+            <div className={`text-2xl font-bold ${getReadingColor(stats.max).split(' ')[0]}`}>
+              {stats.max}
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <div className="text-sm text-gray-500">Total Readings</div>
+            <div className="text-2xl font-bold text-gray-900">{stats.count}</div>
+          </div>
+        </div>
+      )}
 
       {readings.length === 0 ? (
         <div className="text-center py-12">
@@ -93,18 +159,34 @@ export default function DashboardPage() {
                     </div>
                     <div className="ml-4">
                       <div className="text-sm font-medium text-gray-900">
-                        {reading.reading_type.replace('_', ' ').toUpperCase()}
+                        {formatReadingType(reading.reading_type)}
                       </div>
                       <div className="text-sm text-gray-500">
                         {formatTime(reading.recorded_at)}
                       </div>
                     </div>
                   </div>
-                  {reading.carbs && (
-                    <div className="text-sm text-gray-500">
-                      {reading.carbs}g carbs
+                  <div className="flex items-center gap-3">
+                    {reading.carbs && (
+                      <div className="text-sm text-gray-500">
+                        {reading.carbs}g carbs
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      <Link
+                        href={`/dashboard/edit/${reading.id}`}
+                        className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(reading.id)}
+                        className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
-                  )}
+                  </div>
                 </div>
                 {reading.notes && (
                   <div className="mt-2 text-sm text-gray-600">
