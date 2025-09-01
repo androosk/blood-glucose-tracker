@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import Link from 'next/link'
-import { Activity, Smartphone } from 'lucide-react'
+import { Smartphone, Zap, Bell, BarChart3 } from 'lucide-react'
+import Image from 'next/image'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => void
@@ -98,9 +99,13 @@ export default function HomePage() {
       <div className="container mx-auto px-4 py-16">
         <div className="text-center">
           <div className="flex justify-center mb-8">
-            <div className="bg-emerald-600 p-4 rounded-full">
-              <Activity className="h-12 w-12 text-white" />
-            </div>
+            <Image
+              src="/glucosemojoicon.png"
+              alt="GlucoseMojo"
+              width={96}
+              height={96}
+              className="rounded-2xl shadow-lg"
+            />
           </div>
           
           <h1 className="text-5xl font-bold text-gray-900 dark:text-gray-100 mb-6">
@@ -144,7 +149,7 @@ export default function HomePage() {
         <div className="mt-20 grid md:grid-cols-3 gap-8">
           <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
             <div className="bg-emerald-100 dark:bg-emerald-900/30 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-              <Activity className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+              <Zap className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-gray-100">Quick Entry</h3>
             <p className="text-gray-600 dark:text-gray-300">
@@ -154,7 +159,7 @@ export default function HomePage() {
           
           <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
             <div className="bg-blue-100 dark:bg-blue-900/30 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-              <Activity className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <Bell className="h-6 w-6 text-blue-600 dark:text-blue-400" />
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-gray-100">Smart Reminders</h3>
             <p className="text-gray-600 dark:text-gray-300">
@@ -164,7 +169,7 @@ export default function HomePage() {
           
           <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
             <div className="bg-purple-100 dark:bg-purple-900/30 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-              <Activity className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+              <BarChart3 className="h-6 w-6 text-purple-600 dark:text-purple-400" />
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-gray-100">Insights</h3>
             <p className="text-gray-600 dark:text-gray-300">
