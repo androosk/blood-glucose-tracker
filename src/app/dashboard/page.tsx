@@ -9,6 +9,7 @@ import { DailyChart } from '@/components/charts/DailyChart'
 import { WeeklyTrend } from '@/components/charts/WeeklyTrend'
 import { PatternAnalysis } from '@/components/charts/PatternAnalysis'
 import { MealCorrelation } from '@/components/charts/MealCorrelation'
+import { DashboardSkeleton } from '@/components/ui/LoadingSkeleton'
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfDay, endOfDay, format } from 'date-fns'
 
 type Reading = Database['public']['Tables']['readings']['Row']
@@ -212,13 +213,13 @@ export default function DashboardPage() {
   }
 
   if (loading) {
-    return <div className="text-center">Loading readings...</div>
+    return <DashboardSkeleton />
   }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">{getFilterTitle()}</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{getFilterTitle()}</h1>
         <div className="flex items-center gap-4">
           <div className="flex rounded-md shadow-sm">
             <button
@@ -226,7 +227,7 @@ export default function DashboardPage() {
               className={`px-3 py-2 text-sm font-medium rounded-l-md border ${
                 timeFilter === 'today' 
                   ? 'bg-emerald-600 text-white border-emerald-600' 
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               Today
@@ -236,7 +237,7 @@ export default function DashboardPage() {
               className={`px-3 py-2 text-sm font-medium border-t border-b ${
                 timeFilter === 'week' 
                   ? 'bg-emerald-600 text-white border-emerald-600' 
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               Week
@@ -246,7 +247,7 @@ export default function DashboardPage() {
               className={`px-3 py-2 text-sm font-medium rounded-r-md border ${
                 timeFilter === 'month' 
                   ? 'bg-emerald-600 text-white border-emerald-600' 
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               Month
@@ -255,7 +256,7 @@ export default function DashboardPage() {
           <div className="flex gap-2">
             <button
               onClick={() => setShowExportModal(true)}
-              className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+              className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
             >
               <Download className="h-4 w-4 mr-2" />
               Export
@@ -273,27 +274,27 @@ export default function DashboardPage() {
 
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500">Today&apos;s Average</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <div className="text-sm text-gray-500 dark:text-gray-400">{timeFilter === 'today' ? "Today's Average" : timeFilter === 'week' ? "Weekly Average" : "Monthly Average"}</div>
             <div className={`text-2xl font-bold ${getReadingColor(stats.avg).split(' ')[0]}`}>
               {stats.avg}
             </div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500">Lowest</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <div className="text-sm text-gray-500 dark:text-gray-400">Lowest</div>
             <div className={`text-2xl font-bold ${getReadingColor(stats.min).split(' ')[0]}`}>
               {stats.min}
             </div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500">Highest</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <div className="text-sm text-gray-500 dark:text-gray-400">Highest</div>
             <div className={`text-2xl font-bold ${getReadingColor(stats.max).split(' ')[0]}`}>
               {stats.max}
             </div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500">Total Readings</div>
-            <div className="text-2xl font-bold text-gray-900">{stats.count}</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <div className="text-sm text-gray-500 dark:text-gray-400">Total Readings</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.count}</div>
           </div>
         </div>
       )}
@@ -330,7 +331,7 @@ export default function DashboardPage() {
 
       {readings.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-gray-500 text-lg mb-4">No readings recorded today</div>
+          <div className="text-gray-500 dark:text-gray-400 text-lg mb-4">No readings recorded {timeFilter === 'today' ? 'today' : timeFilter === 'week' ? 'this week' : 'this month'}</div>
           <Link
             href="/dashboard/add"
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700"
@@ -340,8 +341,8 @@ export default function DashboardPage() {
           </Link>
         </div>
       ) : (
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
-          <ul className="divide-y divide-gray-200">
+        <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+          <ul className="divide-y divide-gray-200 dark:divide-gray-700">
             {readings.map((reading) => (
               <li key={reading.id} className="px-6 py-4">
                 <div className="flex items-center justify-between">
@@ -350,17 +351,17 @@ export default function DashboardPage() {
                       {reading.value} mg/dL
                     </div>
                     <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {formatReadingType(reading.reading_type)}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
                         {formatTime(reading.recorded_at)}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     {reading.carbs && (
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
                         {reading.carbs}g carbs
                       </div>
                     )}
@@ -381,7 +382,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 {reading.notes && (
-                  <div className="mt-2 text-sm text-gray-600">
+                  <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
                     {reading.notes}
                   </div>
                 )}
@@ -394,9 +395,9 @@ export default function DashboardPage() {
       {/* Export Modal */}
       {showExportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Export Data</h3>
-            <p className="text-sm text-gray-600 mb-6">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Export Data</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
               Export your {getFilterTitle().toLowerCase()} data in your preferred format.
             </p>
             <div className="flex gap-3">
