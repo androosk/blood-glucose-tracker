@@ -115,8 +115,8 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {showInstallPrompt && (
-            <div className="mb-8">
+          <div className="mb-8">
+            {showInstallPrompt ? (
               <button
                 onClick={handleInstallClick}
                 className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-lg"
@@ -124,8 +124,12 @@ export default function HomePage() {
                 <Smartphone className="h-5 w-5" />
                 Install App
               </button>
-            </div>
-          )}
+            ) : (
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                💡 Add GlucoseMojo to your home screen for the best experience
+              </div>
+            )}
+          </div>
         </div>
         
         <div className="mt-20 grid md:grid-cols-3 gap-8">
