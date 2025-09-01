@@ -17,6 +17,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [isStandalone, setIsStandalone] = useState(false)
+  const [isIOSChrome, setIsIOSChrome] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -51,7 +52,15 @@ export default function HomePage() {
       setIsStandalone(isStandaloneMode)
     }
 
+    // Detect iOS Chrome
+    const checkIOSChrome = () => {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+      const isChrome = /CriOS/.test(navigator.userAgent)
+      setIsIOSChrome(isIOS && isChrome)
+    }
+
     checkStandalone()
+    checkIOSChrome()
 
     const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
       e.preventDefault()
@@ -126,7 +135,7 @@ export default function HomePage() {
                 className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-lg"
               >
                 <Smartphone className="h-5 w-5" />
-                {deferredPrompt ? 'Install App' : 'Install Available in Browser Menu'}
+                {deferredPrompt ? 'Install App' : isIOSChrome ? 'Use Safari to Install on iOS' : 'Install Available in Browser Menu'}
               </button>
             </div>
           )}

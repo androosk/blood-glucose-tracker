@@ -26,6 +26,7 @@ export default function DashboardLayout({
   const [isStandalone, setIsStandalone] = useState(false)
   const [showInstallBanner, setShowInstallBanner] = useState(false)
   const [bannerDismissed, setBannerDismissed] = useState(false)
+  const [isIOSChrome, setIsIOSChrome] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -73,7 +74,15 @@ export default function DashboardLayout({
       setIsStandalone(isStandaloneMode)
     }
 
+    // Detect iOS Chrome
+    const checkIOSChrome = () => {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+      const isChrome = /CriOS/.test(navigator.userAgent)
+      setIsIOSChrome(isIOS && isChrome)
+    }
+
     checkStandalone()
+    checkIOSChrome()
 
     const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
       e.preventDefault()
@@ -169,10 +178,10 @@ export default function DashboardLayout({
                 <Smartphone className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 <div>
                   <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                    Install GlucoseMojo for quick access
+                    {isIOSChrome ? 'Use Safari to install GlucoseMojo' : 'Install GlucoseMojo for quick access'}
                   </p>
                   <p className="text-xs text-blue-700 dark:text-blue-300">
-                    Add to your home screen for faster glucose tracking
+                    {isIOSChrome ? 'Chrome on iOS cannot install PWAs - open in Safari' : 'Add to your home screen for faster glucose tracking'}
                   </p>
                 </div>
               </div>
@@ -182,7 +191,7 @@ export default function DashboardLayout({
                   disabled={!deferredPrompt}
                   className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                 >
-                  Install
+                  {isIOSChrome ? 'Use Safari' : 'Install'}
                 </button>
                 <button
                   onClick={dismissBanner}
