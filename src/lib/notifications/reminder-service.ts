@@ -92,7 +92,11 @@ export class ReminderService {
     const reminderId = `${schedule.readingId}_${schedule.reminderType}`
     
     reminders[reminderId] = {
-      ...schedule,
+      readingId: schedule.readingId,
+      mealId: schedule.mealId,
+      userId: schedule.userId,
+      reminderType: schedule.reminderType,
+      readingType: schedule.readingType,
       scheduledTime: schedule.scheduledTime.toISOString()
     }
     
@@ -116,24 +120,13 @@ export class ReminderService {
       badge: '/icons/icon-72x72.png',
       tag: `reminder-${schedule.readingId}-${schedule.reminderType}`,
       requireInteraction: true,
-      vibrate: [200, 100, 200, 100, 200],
       data: {
         readingId: schedule.readingId,
         mealId: schedule.mealId,
         readingType: schedule.readingType,
         type: 'meal-reminder'
-      },
-      actions: [
-        {
-          action: 'log',
-          title: '📝 Log Reading'
-        },
-        {
-          action: 'snooze',  
-          title: '⏰ Snooze 10min'
-        }
-      ]
-    })
+      }
+    } as NotificationOptions)
 
     // Handle click events
     notification.onclick = () => {
@@ -183,7 +176,7 @@ export class ReminderService {
   /**
    * Get stored reminders from localStorage
    */
-  private getStoredReminders(): Record<string, ReminderSchedule & { scheduledTime: string }> {
+  private getStoredReminders(): Record<string, Omit<ReminderSchedule, 'scheduledTime'> & { scheduledTime: string }> {
     try {
       const stored = localStorage.getItem('bloodSugarReminders')
       return stored ? JSON.parse(stored) : {}
@@ -214,8 +207,12 @@ export class ReminderService {
 
       if (timeUntilReminder > 0) {
         // Re-schedule this reminder
+        const reminder: ReminderSchedule = {
+          ...reminderData,
+          scheduledTime: new Date(reminderData.scheduledTime)
+        }
         setTimeout(() => {
-          this.showReminderNotification(reminderData as ReminderSchedule)
+          this.showReminderNotification(reminder)
         }, timeUntilReminder)
       } else {
         // Remove expired reminders
@@ -253,8 +250,7 @@ export class ReminderService {
       new Notification('Test Notification 🧪', {
         body: 'This is how your blood sugar reminders will look!',
         icon: '/icons/icon-192x192.png',
-        badge: '/icons/icon-72x72.png',
-        vibrate: [200, 100, 200]
+        badge: '/icons/icon-72x72.png'
       })
       
       return { success: true }
