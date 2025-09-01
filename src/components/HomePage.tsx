@@ -16,7 +16,6 @@ export default function HomePage() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
-  const [showInstallPrompt, setShowInstallPrompt] = useState(false)
   const [isStandalone, setIsStandalone] = useState(false)
   const router = useRouter()
   const supabase = createClient()
@@ -47,7 +46,7 @@ export default function HomePage() {
     // Check if app is running as installed PWA
     const checkStandalone = () => {
       const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches ||
-                              (window.navigator as any)?.standalone ||
+                              Boolean((window.navigator as { standalone?: boolean })?.standalone) ||
                               document.referrer.includes('android-app://')
       setIsStandalone(isStandaloneMode)
     }
