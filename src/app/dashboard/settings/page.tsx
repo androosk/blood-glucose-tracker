@@ -7,6 +7,7 @@ import { ArrowLeft, Bell, TestTube, Save, Moon } from 'lucide-react'
 import Link from 'next/link'
 import { NotificationStatus } from '@/components/notifications/NotificationPrompt'
 import { reminderService } from '@/lib/notifications/reminder-service'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
@@ -139,10 +140,13 @@ export default function SettingsPage() {
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Settings</h1>
       </div>
 
       <div className="space-y-6">
+        {/* Theme Settings */}
+        <ThemeToggle />
+
         {/* Notification Status */}
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="flex items-center justify-between mb-4">

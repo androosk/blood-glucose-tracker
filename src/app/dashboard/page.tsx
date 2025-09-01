@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/database'
 import { Plus, Edit2, Trash2 } from 'lucide-react'
 import Link from 'next/link'
+import { DashboardSkeleton } from '@/components/ui/LoadingSkeleton'
 
 type Reading = Database['public']['Tables']['readings']['Row']
 
@@ -93,13 +94,13 @@ export default function DashboardPage() {
   }
 
   if (loading) {
-    return <div className="text-center">Loading today&apos;s readings...</div>
+    return <DashboardSkeleton />
   }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Today&apos;s Readings</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Today&apos;s Readings</h1>
         <Link
           href="/dashboard/add"
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
@@ -111,34 +112,34 @@ export default function DashboardPage() {
 
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500">Today&apos;s Average</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <div className="text-sm text-gray-500 dark:text-gray-400">Today&apos;s Average</div>
             <div className={`text-2xl font-bold ${getReadingColor(stats.avg).split(' ')[0]}`}>
               {stats.avg}
             </div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500">Lowest</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <div className="text-sm text-gray-500 dark:text-gray-400">Lowest</div>
             <div className={`text-2xl font-bold ${getReadingColor(stats.min).split(' ')[0]}`}>
               {stats.min}
             </div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500">Highest</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <div className="text-sm text-gray-500 dark:text-gray-400">Highest</div>
             <div className={`text-2xl font-bold ${getReadingColor(stats.max).split(' ')[0]}`}>
               {stats.max}
             </div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500">Total Readings</div>
-            <div className="text-2xl font-bold text-gray-900">{stats.count}</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <div className="text-sm text-gray-500 dark:text-gray-400">Total Readings</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.count}</div>
           </div>
         </div>
       )}
 
       {readings.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-gray-500 text-lg mb-4">No readings recorded today</div>
+          <div className="text-gray-500 dark:text-gray-400 text-lg mb-4">No readings recorded today</div>
           <Link
             href="/dashboard/add"
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700"
@@ -148,8 +149,8 @@ export default function DashboardPage() {
           </Link>
         </div>
       ) : (
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
-          <ul className="divide-y divide-gray-200">
+        <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+          <ul className="divide-y divide-gray-200 dark:divide-gray-700">
             {readings.map((reading) => (
               <li key={reading.id} className="px-6 py-4">
                 <div className="flex items-center justify-between">
@@ -158,17 +159,17 @@ export default function DashboardPage() {
                       {reading.value} mg/dL
                     </div>
                     <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {formatReadingType(reading.reading_type)}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
                         {formatTime(reading.recorded_at)}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     {reading.carbs && (
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
                         {reading.carbs}g carbs
                       </div>
                     )}
@@ -189,7 +190,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 {reading.notes && (
-                  <div className="mt-2 text-sm text-gray-600">
+                  <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
                     {reading.notes}
                   </div>
                 )}
