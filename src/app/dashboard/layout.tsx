@@ -7,7 +7,7 @@ import { User } from '@supabase/supabase-js'
 import NotificationPrompt from '@/components/notifications/NotificationPrompt'
 import { reminderService } from '@/lib/notifications/reminder-service'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
-import { Settings, Smartphone, X, MessageSquare } from 'lucide-react'
+import { Settings, X } from 'lucide-react'
 import Link from 'next/link'
 import FeedbackModal from '@/components/FeedbackModal'
 
@@ -144,22 +144,11 @@ export default function DashboardLayout({
               </h1>
             </div>
             <div className="flex items-center space-x-3">
-              {!isStandalone && (
-                <button
-                  onClick={handleInstallClick}
-                  disabled={!deferredPrompt}
-                  className="p-2 text-blue-600 hover:text-blue-700 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
-                  title={deferredPrompt ? "Install App" : "Install via browser menu"}
-                >
-                  <Smartphone className="h-5 w-5" />
-                </button>
-              )}
               <button
                 onClick={() => setShowFeedbackModal(true)}
-                className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
-                title="Send Feedback"
+                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-full transition-colors"
               >
-                <MessageSquare className="h-5 w-5" />
+                Feedback
               </button>
               <Link
                 href="/dashboard/settings"
@@ -184,7 +173,6 @@ export default function DashboardLayout({
           <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <Smartphone className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 <div>
                   <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
                     {isIOSChrome ? 'Use Safari to install GlucoseMojo' : 'Install GlucoseMojo for quick access'}
