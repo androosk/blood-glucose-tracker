@@ -7,8 +7,13 @@ import { User } from '@supabase/supabase-js'
 import NotificationPrompt from '@/components/notifications/NotificationPrompt'
 import { reminderService } from '@/lib/notifications/reminder-service'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
-import { Settings } from 'lucide-react'
+import { Settings, Smartphone } from 'lucide-react'
 import Link from 'next/link'
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => void
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
 
 export default function DashboardLayout({
   children,
@@ -17,6 +22,8 @@ export default function DashboardLayout({
 }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
+  const [isStandalone, setIsStandalone] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -55,8 +62,37 @@ export default function DashboardLayout({
     return () => subscription.unsubscribe()
   }, [router, supabase])
 
+  useEffect(() => {
+    // Check if app is running as installed PWA
+    const checkStandalone = () => {
+      const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches ||
+                              Boolean((window.navigator as { standalone?: boolean })?.standalone) ||
+                              document.referrer.includes('android-app://')
+      setIsStandalone(isStandaloneMode)
+    }
+
+    checkStandalone()
+
+    const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
+      e.preventDefault()
+      setDeferredPrompt(e)
+    }
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener)
+    }
+  }, [])
+
   const handleSignOut = async () => {
     await supabase.auth.signOut()
+  }
+
+  const handleInstallClick = () => {
+    if (!deferredPrompt) return
+    deferredPrompt.prompt()
+    setDeferredPrompt(null)
   }
 
   if (loading) {
@@ -83,6 +119,16 @@ export default function DashboardLayout({
               </h1>
             </div>
             <div className="flex items-center space-x-3">
+              {!isStandalone && (
+                <button
+                  onClick={handleInstallClick}
+                  disabled={!deferredPrompt}
+                  className="p-2 text-blue-600 hover:text-blue-700 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
+                  title={deferredPrompt ? "Install App" : "Install via browser menu"}
+                >
+                  <Smartphone className="h-5 w-5" />
+                </button>
+              )}
               <Link
                 href="/dashboard/settings"
                 className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
