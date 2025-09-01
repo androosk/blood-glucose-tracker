@@ -16,7 +16,7 @@ export default function HomePage() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
-  const [showInstallPrompt, setShowInstallPrompt] = useState(false)
+  const [isStandalone, setIsStandalone] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -43,10 +43,19 @@ export default function HomePage() {
   }, [router, supabase])
 
   useEffect(() => {
+    // Check if app is running as installed PWA
+    const checkStandalone = () => {
+      const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches ||
+                              Boolean((window.navigator as { standalone?: boolean })?.standalone) ||
+                              document.referrer.includes('android-app://')
+      setIsStandalone(isStandaloneMode)
+    }
+
+    checkStandalone()
+
     const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
       e.preventDefault()
       setDeferredPrompt(e)
-      setShowInstallPrompt(true)
     }
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener)
@@ -60,11 +69,7 @@ export default function HomePage() {
     if (!deferredPrompt) return
 
     deferredPrompt.prompt()
-    const { outcome } = await deferredPrompt.userChoice
-    
-    if (outcome === 'accepted') {
-      setShowInstallPrompt(false)
-    }
+    await deferredPrompt.userChoice
     
     setDeferredPrompt(null)
   }
@@ -115,14 +120,15 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {showInstallPrompt && (
+          {!isStandalone && (
             <div className="mb-8">
               <button
                 onClick={handleInstallClick}
-                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-lg"
+                disabled={!deferredPrompt}
+                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-lg"
               >
                 <Smartphone className="h-5 w-5" />
-                Install App
+                {deferredPrompt ? 'Install App' : 'Install Available in Browser Menu'}
               </button>
             </div>
           )}
