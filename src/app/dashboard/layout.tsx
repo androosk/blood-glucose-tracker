@@ -7,7 +7,7 @@ import { User } from '@supabase/supabase-js'
 import NotificationPrompt from '@/components/notifications/NotificationPrompt'
 import { reminderService } from '@/lib/notifications/reminder-service'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
-import { Settings, Smartphone } from 'lucide-react'
+import { Settings, Smartphone, X } from 'lucide-react'
 import Link from 'next/link'
 
 interface BeforeInstallPromptEvent extends Event {
@@ -24,6 +24,8 @@ export default function DashboardLayout({
   const [loading, setLoading] = useState(true)
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [isStandalone, setIsStandalone] = useState(false)
+  const [showInstallBanner, setShowInstallBanner] = useState(false)
+  const [bannerDismissed, setBannerDismissed] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -76,6 +78,12 @@ export default function DashboardLayout({
     const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
       e.preventDefault()
       setDeferredPrompt(e)
+      // Show banner after 5 seconds if not dismissed
+      setTimeout(() => {
+        if (!bannerDismissed && !isStandalone) {
+          setShowInstallBanner(true)
+        }
+      }, 5000)
     }
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener)
@@ -93,6 +101,12 @@ export default function DashboardLayout({
     if (!deferredPrompt) return
     deferredPrompt.prompt()
     setDeferredPrompt(null)
+    setShowInstallBanner(false)
+  }
+
+  const dismissBanner = () => {
+    setShowInstallBanner(false)
+    setBannerDismissed(true)
   }
 
   if (loading) {
@@ -146,6 +160,42 @@ export default function DashboardLayout({
           </div>
         </div>
       </nav>
+      
+      {showInstallBanner && !isStandalone && (
+        <div className="bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800">
+          <div className="max-w-7xl mx-auto px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Smartphone className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <div>
+                  <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                    Install GlucoseMojo for quick access
+                  </p>
+                  <p className="text-xs text-blue-700 dark:text-blue-300">
+                    Add to your home screen for faster glucose tracking
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleInstallClick}
+                  disabled={!deferredPrompt}
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  Install
+                </button>
+                <button
+                  onClick={dismissBanner}
+                  className="p-1 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <ErrorBoundary>
           {children}
