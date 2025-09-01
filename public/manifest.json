@@ -1,0 +1,19 @@
+{
+  "name": "GlucoseMojo",
+  "short_name": "GlucoseMojo",
+  "description": "Smart blood sugar monitoring with insights",
+  "theme_color": "#10b981",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/glucosemojoicon.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["medical", "health", "lifestyle"]
+}
