@@ -69,11 +69,7 @@ export default function HomePage() {
     if (!deferredPrompt) return
 
     deferredPrompt.prompt()
-    const { outcome } = await deferredPrompt.userChoice
-    
-    if (outcome === 'accepted') {
-      setShowInstallPrompt(false)
-    }
+    await deferredPrompt.userChoice
     
     setDeferredPrompt(null)
   }
