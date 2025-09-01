@@ -38,11 +38,11 @@ export function MealCorrelation({ readings, targetMin = 70, targetMax = 140 }: M
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="font-medium">{`${data.glucose} mg/dL`}</p>
-          <p className="text-sm text-gray-600">{`Carbs: ${data.carbs}g`}</p>
-          <p className="text-sm text-gray-600 capitalize">{`Type: ${data.type.replace('_', ' ')}`}</p>
-          <p className="text-sm text-gray-500">
+        <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg">
+          <p className="font-medium text-gray-900 dark:text-gray-100">{`${data.glucose} mg/dL`}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">{`Carbs: ${data.carbs}g`}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300 capitalize">{`Type: ${data.type.replace('_', ' ')}`}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             {new Date(data.recorded_at).toLocaleDateString()}
           </p>
         </div>
@@ -53,9 +53,9 @@ export function MealCorrelation({ readings, targetMin = 70, targetMax = 140 }: M
 
   if (chartData.length === 0) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Carbs vs Blood Sugar</h3>
-        <div className="text-center text-gray-500 py-8">
+      <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Carbs vs Blood Sugar</h3>
+        <div className="text-center text-gray-500 dark:text-gray-400 py-8">
           No readings with carb data. Add carb information to your readings to see correlations.
         </div>
       </div>
@@ -63,9 +63,9 @@ export function MealCorrelation({ readings, targetMin = 70, targetMax = 140 }: M
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Carbs vs Blood Sugar</h3>
-      <div className="h-64">
+    <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow">
+      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Carbs vs Blood Sugar</h3>
+      <div className="h-48 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
           <ScatterChart data={chartData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <CartesianGrid strokeDasharray="3 3" />

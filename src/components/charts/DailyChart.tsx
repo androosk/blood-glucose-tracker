@@ -36,10 +36,10 @@ export function DailyChart({ readings, targetMin = 70, targetMax = 140 }: DailyC
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="font-medium">{`${data.value} mg/dL`}</p>
-          <p className="text-sm text-gray-600">{`Time: ${label}`}</p>
-          <p className="text-sm text-gray-600 capitalize">{`Type: ${data.type.replace('_', ' ')}`}</p>
+        <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg">
+          <p className="font-medium text-gray-900 dark:text-gray-100">{`${data.value} mg/dL`}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">{`Time: ${label}`}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300 capitalize">{`Type: ${data.type.replace('_', ' ')}`}</p>
         </div>
       )
     }
@@ -48,9 +48,9 @@ export function DailyChart({ readings, targetMin = 70, targetMax = 140 }: DailyC
 
   if (readings.length === 0) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Trend</h3>
-        <div className="text-center text-gray-500 py-8">
+      <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Daily Trend</h3>
+        <div className="text-center text-gray-500 dark:text-gray-400 py-8">
           No readings for today. Add some readings to see your daily trend.
         </div>
       </div>
@@ -58,9 +58,9 @@ export function DailyChart({ readings, targetMin = 70, targetMax = 140 }: DailyC
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Trend</h3>
-      <div className="h-64">
+    <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow">
+      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Daily Trend</h3>
+      <div className="h-48 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />

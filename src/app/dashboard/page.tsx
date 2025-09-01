@@ -218,13 +218,13 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{getFilterTitle()}</h1>
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">{getFilterTitle()}</h1>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <div className="flex rounded-md shadow-sm">
             <button
               onClick={() => setTimeFilter('today')}
-              className={`px-3 py-2 text-sm font-medium rounded-l-md border ${
+              className={`flex-1 sm:flex-none px-3 py-2 text-sm font-medium rounded-l-md border ${
                 timeFilter === 'today' 
                   ? 'bg-emerald-600 text-white border-emerald-600' 
                   : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
@@ -234,7 +234,7 @@ export default function DashboardPage() {
             </button>
             <button
               onClick={() => setTimeFilter('week')}
-              className={`px-3 py-2 text-sm font-medium border-t border-b ${
+              className={`flex-1 sm:flex-none px-3 py-2 text-sm font-medium border-t border-b ${
                 timeFilter === 'week' 
                   ? 'bg-emerald-600 text-white border-emerald-600' 
                   : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
@@ -244,7 +244,7 @@ export default function DashboardPage() {
             </button>
             <button
               onClick={() => setTimeFilter('month')}
-              className={`px-3 py-2 text-sm font-medium rounded-r-md border ${
+              className={`flex-1 sm:flex-none px-3 py-2 text-sm font-medium rounded-r-md border ${
                 timeFilter === 'month' 
                   ? 'bg-emerald-600 text-white border-emerald-600' 
                   : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
@@ -256,78 +256,82 @@ export default function DashboardPage() {
           <div className="flex gap-2">
             <button
               onClick={() => setShowExportModal(true)}
-              className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+              className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
             >
-              <Download className="h-4 w-4 mr-2" />
-              Export
+              <Download className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Export</span>
             </button>
             <Link
               href="/dashboard/add"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+              className="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Reading
+              <Plus className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Add Reading</span>
             </Link>
           </div>
         </div>
       </div>
 
       {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500 dark:text-gray-400">{timeFilter === 'today' ? "Today's Average" : timeFilter === 'week' ? "Weekly Average" : "Monthly Average"}</div>
-            <div className={`text-2xl font-bold ${getReadingColor(stats.avg).split(' ')[0]}`}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+          <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
+            <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">{timeFilter === 'today' ? "Today's Avg" : timeFilter === 'week' ? "Weekly Avg" : "Monthly Avg"}</div>
+            <div className={`text-xl sm:text-2xl font-bold ${getReadingColor(stats.avg).split(' ')[0]}`}>
               {stats.avg}
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500 dark:text-gray-400">Lowest</div>
-            <div className={`text-2xl font-bold ${getReadingColor(stats.min).split(' ')[0]}`}>
+          <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
+            <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">Lowest</div>
+            <div className={`text-xl sm:text-2xl font-bold ${getReadingColor(stats.min).split(' ')[0]}`}>
               {stats.min}
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500 dark:text-gray-400">Highest</div>
-            <div className={`text-2xl font-bold ${getReadingColor(stats.max).split(' ')[0]}`}>
+          <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
+            <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">Highest</div>
+            <div className={`text-xl sm:text-2xl font-bold ${getReadingColor(stats.max).split(' ')[0]}`}>
               {stats.max}
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500 dark:text-gray-400">Total Readings</div>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.count}</div>
+          <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
+            <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">Total</div>
+            <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.count}</div>
           </div>
         </div>
       )}
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {timeFilter === 'today' ? (
-          <DailyChart 
-            readings={readings} 
+      <div className="space-y-4 sm:space-y-6">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+          {timeFilter === 'today' ? (
+            <DailyChart 
+              readings={readings} 
+              targetMin={profile?.target_min} 
+              targetMax={profile?.target_max} 
+            />
+          ) : (
+            <WeeklyTrend 
+              readings={getFilteredChartData()} 
+              targetMin={profile?.target_min} 
+              targetMax={profile?.target_max} 
+            />
+          )}
+          
+          <PatternAnalysis 
+            readings={allReadings} 
             targetMin={profile?.target_min} 
             targetMax={profile?.target_max} 
           />
-        ) : (
-          <WeeklyTrend 
-            readings={getFilteredChartData()} 
-            targetMin={profile?.target_min} 
-            targetMax={profile?.target_max} 
-          />
-        )}
-        
-        <PatternAnalysis 
-          readings={allReadings} 
-          targetMin={profile?.target_min} 
-          targetMax={profile?.target_max} 
-        />
-      </div>
+        </div>
 
-      {/* Meal Correlation Chart */}
-      <MealCorrelation 
-        readings={allReadings} 
-        targetMin={profile?.target_min} 
-        targetMax={profile?.target_max} 
-      />
+        {/* Meal Correlation Chart */}
+        <div className="w-full">
+          <MealCorrelation 
+            readings={allReadings} 
+            targetMin={profile?.target_min} 
+            targetMax={profile?.target_max} 
+          />
+        </div>
+      </div>
 
       {readings.length === 0 ? (
         <div className="text-center py-12">

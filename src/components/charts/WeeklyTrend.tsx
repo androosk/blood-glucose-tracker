@@ -53,17 +53,17 @@ export function WeeklyTrend({ readings, targetMin = 70, targetMax = 140 }: Weekl
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="font-medium">{label}</p>
+        <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg">
+          <p className="font-medium text-gray-900 dark:text-gray-100">{label}</p>
           {data.average && (
             <>
-              <p className="text-sm">{`Average: ${data.average} mg/dL`}</p>
-              <p className="text-sm text-gray-600">{`Range: ${data.min} - ${data.max} mg/dL`}</p>
-              <p className="text-sm text-gray-600">{`Readings: ${data.count}`}</p>
+              <p className="text-sm text-gray-900 dark:text-gray-100">{`Average: ${data.average} mg/dL`}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">{`Range: ${data.min} - ${data.max} mg/dL`}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">{`Readings: ${data.count}`}</p>
             </>
           )}
           {!data.average && (
-            <p className="text-sm text-gray-500">No readings</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">No readings</p>
           )}
         </div>
       )
@@ -75,9 +75,9 @@ export function WeeklyTrend({ readings, targetMin = 70, targetMax = 140 }: Weekl
 
   if (!hasData) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Weekly Trend</h3>
-        <div className="text-center text-gray-500 py-8">
+      <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Weekly Trend</h3>
+        <div className="text-center text-gray-500 dark:text-gray-400 py-8">
           No readings in the past 7 days. Add some readings to see your weekly trend.
         </div>
       </div>
@@ -85,9 +85,9 @@ export function WeeklyTrend({ readings, targetMin = 70, targetMax = 140 }: Weekl
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Weekly Trend</h3>
-      <div className="h-64">
+    <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow">
+      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Weekly Trend</h3>
+      <div className="h-48 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
