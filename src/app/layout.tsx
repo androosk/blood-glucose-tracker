@@ -15,9 +15,13 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Blood Sugar Tracker",
-  description: "Track blood sugar levels with reminders",
+  title: "GlucoseMojo",
+  description: "Smart blood sugar monitoring with insights",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/glucosemojoicon.png",
+    apple: "/glucosemojoicon.png",
+  },
 };
 
 export const viewport = {
