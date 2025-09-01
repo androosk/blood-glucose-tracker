@@ -69,8 +69,6 @@ export default function HomePage() {
     if (!deferredPrompt) return
 
     deferredPrompt.prompt()
-    await deferredPrompt.userChoice
-    
     setDeferredPrompt(null)
   }
 
