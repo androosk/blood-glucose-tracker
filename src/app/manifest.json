@@ -1,7 +1,7 @@
 {
-  "name": "Blood Sugar Tracker",
-  "short_name": "BS Tracker",
-  "description": "Track blood sugar levels with reminders",
+  "name": "GlucoseMojo",
+  "short_name": "GlucoseMojo",
+  "description": "Smart blood sugar monitoring with insights",
   "theme_color": "#10b981",
   "background_color": "#ffffff",
   "display": "standalone",
