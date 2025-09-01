@@ -19,7 +19,9 @@ export const metadata: Metadata = {
   description: "Smart blood sugar monitoring with insights",
   manifest: "/manifest.json",
   icons: {
-    icon: "/glucosemojoicon.png",
+    icon: [
+      { url: "/glucosemojoicon.png", sizes: "any", type: "image/png" }
+    ],
     apple: "/glucosemojoicon.png",
   },
 };
