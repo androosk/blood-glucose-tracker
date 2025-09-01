@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { ArrowLeft, Clock } from 'lucide-react'
 import Link from 'next/link'
+import { reminderService } from '@/lib/notifications/reminder-service'
 
 const PRESET_VALUES = [70, 80, 90, 100, 110, 120, 130, 140, 150]
 
@@ -30,7 +31,16 @@ export default function AddReadingPage() {
   const [error, setError] = useState<string | null>(null)
   
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
+
+  // Initialize form from URL parameters (e.g., from notifications)
+  useEffect(() => {
+    const typeFromUrl = searchParams.get('type')
+    if (typeFromUrl && ['fasting', 'pre_meal', 'post_30', 'post_90', 'random'].includes(typeFromUrl)) {
+      setReadingType(typeFromUrl)
+    }
+  }, [searchParams])
 
   const handlePresetClick = (presetValue: number) => {
     setValue(presetValue)
@@ -51,7 +61,7 @@ export default function AddReadingPage() {
         return
       }
 
-      const { error: insertError } = await supabase
+      const { data: insertData, error: insertError } = await supabase
         .from('readings')
         .insert({
           user_id: user.id,
@@ -61,11 +71,29 @@ export default function AddReadingPage() {
           notes: notes.trim() || null,
           recorded_at: new Date(recordedAt).toISOString(),
         })
+        .select()
 
       if (insertError) {
         setError(insertError.message)
         setLoading(false)
-      } else {
+      } else if (insertData && insertData[0]) {
+        const newReading = insertData[0]
+        
+        // Schedule reminders if this is a pre-meal reading
+        if (readingType === 'pre_meal') {
+          try {
+            const mealTime = new Date(recordedAt)
+            await reminderService.schedulePostMealReminders(
+              newReading.id,
+              user.id,
+              mealTime
+            )
+          } catch (reminderError) {
+            console.warn('Failed to schedule reminders:', reminderError)
+            // Don't block the main flow if reminder scheduling fails
+          }
+        }
+        
         router.push('/dashboard')
       }
     } catch {
