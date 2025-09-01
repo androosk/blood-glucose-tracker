@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { ArrowLeft, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { reminderService } from '@/lib/notifications/reminder-service'
+import DOMPurify from 'dompurify'
 
 const PRESET_VALUES = [70, 80, 90, 100, 110, 120, 130, 140, 150]
 
@@ -46,9 +47,37 @@ export default function AddReadingPage() {
     setValue(presetValue)
   }
 
+  const validateInput = () => {
+    if (!value) {
+      setError('Blood glucose value is required')
+      return false
+    }
+    
+    const numValue = Number(value)
+    if (isNaN(numValue) || numValue < 20 || numValue > 600) {
+      setError('Blood glucose must be between 20-600 mg/dL')
+      return false
+    }
+    
+    if (carbs !== '' && (isNaN(Number(carbs)) || Number(carbs) < 0 || Number(carbs) > 500)) {
+      setError('Carbs must be between 0-500 grams')
+      return false
+    }
+    
+    if (notes.length > 500) {
+      setError('Notes must be less than 500 characters')
+      return false
+    }
+    
+    return true
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!value) return
+    
+    if (!validateInput()) {
+      return
+    }
     
     setLoading(true)
     setError(null)
@@ -68,7 +97,7 @@ export default function AddReadingPage() {
           value: Number(value),
           reading_type: readingType as 'pre_meal' | 'post_30' | 'post_90' | 'random' | 'fasting',
           carbs: carbs ? Number(carbs) : null,
-          notes: notes.trim() || null,
+          notes: notes.trim() ? DOMPurify.sanitize(notes.trim()) : null,
           recorded_at: new Date(recordedAt).toISOString(),
         })
         .select()

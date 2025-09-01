@@ -91,7 +91,7 @@ export default function DashboardLayout({
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener)
     }
-  }, [])
+  }, [bannerDismissed, isStandalone])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
