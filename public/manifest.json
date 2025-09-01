@@ -15,5 +15,19 @@
       "type": "image/png"
     }
   ],
+  "screenshots": [
+    {
+      "src": "/glucosemojodesktop.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/glucosemojomobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
   "categories": ["medical", "health", "lifestyle"]
 }
