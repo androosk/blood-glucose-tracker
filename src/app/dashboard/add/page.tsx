@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { ArrowLeft, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { reminderService } from '@/lib/notifications/reminder-service'
+import { ReminderPrompt } from '@/components/ReminderPrompt'
 import DOMPurify from 'dompurify'
 
 const PRESET_VALUES = [70, 80, 90, 100, 110, 120, 130, 140, 150]
@@ -30,6 +31,8 @@ export default function AddReadingPage() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showReminderPrompt, setShowReminderPrompt] = useState(false)
+  const [lastReadingId, setLastReadingId] = useState<string | null>(null)
   
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -108,27 +111,66 @@ export default function AddReadingPage() {
       } else if (insertData && insertData[0]) {
         const newReading = insertData[0]
         
-        // Schedule reminders if this is a pre-meal reading
-        if (readingType === 'pre_meal') {
-          try {
-            const mealTime = new Date(recordedAt)
+        // Schedule reminders
+        try {
+          const readingDateTime = new Date(recordedAt)
+          
+          // Schedule post-meal reminders if this is a pre-meal reading
+          if (readingType === 'pre_meal') {
             await reminderService.schedulePostMealReminders(
               newReading.id,
               user.id,
-              mealTime
+              readingDateTime
             )
-          } catch (reminderError) {
-            console.warn('Failed to schedule reminders:', reminderError)
-            // Don't block the main flow if reminder scheduling fails
           }
+          
+          // Don't auto-schedule general reminder - let user choose
+        } catch (reminderError) {
+          console.warn('Failed to schedule reminders:', reminderError)
+          // Don't block the main flow if reminder scheduling fails
         }
         
-        router.push('/dashboard')
+        // Show reminder prompt for user to choose
+        setLastReadingId(newReading.id)
+        setShowReminderPrompt(true)
       }
     } catch {
       setError('Failed to save reading')
       setLoading(false)
     }
+  }
+
+  const handleSetReminder = async (minutes: number) => {
+    if (!lastReadingId) return
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      // Update user's general reminder preference
+      await supabase
+        .from('profiles')
+        .update({ 
+          enable_general_reminders: true,
+          general_reminder_minutes: minutes 
+        })
+        .eq('id', user.id)
+
+      // Schedule the reminder
+      await reminderService.scheduleGeneralReminder(
+        lastReadingId,
+        user.id,
+        new Date(recordedAt)
+      )
+    } catch (error) {
+      console.warn('Failed to schedule reminder:', error)
+    }
+    
+    router.push('/dashboard')
+  }
+
+  const handleSkipReminder = () => {
+    router.push('/dashboard')
   }
 
   const getValueColor = (val: number) => {
@@ -273,6 +315,12 @@ export default function AddReadingPage() {
           {loading ? 'Saving...' : 'Save Reading'}
         </button>
       </form>
+
+      <ReminderPrompt
+        isOpen={showReminderPrompt}
+        onClose={handleSkipReminder}
+        onSetReminder={handleSetReminder}
+      />
     </div>
   )
 }
