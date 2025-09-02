@@ -13,6 +13,8 @@ export interface Database {
           timezone: string
           silent_start: string
           silent_end: string
+          enable_general_reminders: boolean
+          general_reminder_minutes: number
           created_at: string
           updated_at: string
         }
@@ -27,6 +29,8 @@ export interface Database {
           timezone?: string
           silent_start?: string
           silent_end?: string
+          enable_general_reminders?: boolean
+          general_reminder_minutes?: number
           created_at?: string
           updated_at?: string
         }
@@ -41,6 +45,8 @@ export interface Database {
           timezone?: string
           silent_start?: string
           silent_end?: string
+          enable_general_reminders?: boolean
+          general_reminder_minutes?: number
           created_at?: string
           updated_at?: string
         }

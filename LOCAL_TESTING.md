@@ -23,6 +23,8 @@ CREATE TABLE profiles (
   timezone TEXT DEFAULT 'America/Denver',
   silent_start TIME DEFAULT '22:00',
   silent_end TIME DEFAULT '07:00',
+  enable_general_reminders BOOLEAN DEFAULT FALSE,
+  general_reminder_minutes INTEGER DEFAULT 120,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

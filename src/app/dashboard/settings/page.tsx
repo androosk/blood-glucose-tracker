@@ -25,6 +25,8 @@ export default function SettingsPage() {
   const [silentEnd, setSilentEnd] = useState('07:00')
   const [targetMin, setTargetMin] = useState(70)
   const [targetMax, setTargetMax] = useState(140)
+  const [enableGeneralReminders, setEnableGeneralReminders] = useState(false)
+  const [generalReminderMinutes, setGeneralReminderMinutes] = useState(120)
   
   const supabase = createClient()
 
@@ -49,6 +51,8 @@ export default function SettingsPage() {
         setSilentEnd(data.silent_end)
         setTargetMin(data.target_min)
         setTargetMax(data.target_max)
+        setEnableGeneralReminders(data.enable_general_reminders || false)
+        setGeneralReminderMinutes(data.general_reminder_minutes || 120)
       }
       setLoading(false)
     }
@@ -72,6 +76,8 @@ export default function SettingsPage() {
           silent_end: silentEnd,
           target_min: targetMin,
           target_max: targetMax,
+          enable_general_reminders: enableGeneralReminders,
+          general_reminder_minutes: generalReminderMinutes,
           updated_at: new Date().toISOString(),
         })
         .eq('id', profile.id)
@@ -88,6 +94,8 @@ export default function SettingsPage() {
           silent_end: silentEnd,
           target_min: targetMin,
           target_max: targetMax,
+          enable_general_reminders: enableGeneralReminders,
+          general_reminder_minutes: generalReminderMinutes,
         })
       }
     } catch {
@@ -216,6 +224,75 @@ export default function SettingsPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               />
             </div>
+          </div>
+        </div>
+
+        {/* General Check-In Reminders */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            General Check-In Reminders
+          </h2>
+          
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Get reminded to check your blood sugar after a custom interval from your last reading.
+          </p>
+          
+          <div className="space-y-4">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={enableGeneralReminders}
+                onChange={(e) => setEnableGeneralReminders(e.target.checked)}
+                className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-gray-600 rounded"
+              />
+              <span className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+                Enable general check-in reminders
+              </span>
+            </label>
+            
+            {enableGeneralReminders && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Remind me to check again after (minutes)
+                </label>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setGeneralReminderMinutes(30)}
+                    className={`px-4 py-2 rounded-lg border-2 font-medium transition-colors ${
+                      generalReminderMinutes === 30
+                        ? 'bg-emerald-100 dark:bg-emerald-900/30 border-emerald-500 text-emerald-700 dark:text-emerald-300'
+                        : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    30 min
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setGeneralReminderMinutes(90)}
+                    className={`px-4 py-2 rounded-lg border-2 font-medium transition-colors ${
+                      generalReminderMinutes === 90
+                        ? 'bg-emerald-100 dark:bg-emerald-900/30 border-emerald-500 text-emerald-700 dark:text-emerald-300'
+                        : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    90 min
+                  </button>
+                  <input
+                    type="number"
+                    min="15"
+                    max="480"
+                    value={generalReminderMinutes}
+                    onChange={(e) => setGeneralReminderMinutes(Number(e.target.value))}
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    placeholder="Custom minutes"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Between 15 minutes and 8 hours
+                </p>
+              </div>
+            )}
           </div>
         </div>
 

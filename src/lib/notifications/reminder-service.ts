@@ -4,9 +4,9 @@ export interface ReminderSchedule {
   readingId: string
   mealId?: string
   userId: string
-  reminderType: '30min' | '90min'
+  reminderType: '30min' | '90min' | 'general'
   scheduledTime: Date
-  readingType: 'post_30' | 'post_90'
+  readingType: 'post_30' | 'post_90' | 'general'
 }
 
 export class ReminderService {
@@ -29,7 +29,7 @@ export class ReminderService {
       // Get user preferences for reminder timing
       const { data: profile } = await this.supabase
         .from('profiles')
-        .select('reminder_1_minutes, reminder_2_minutes, silent_start, silent_end, timezone')
+        .select('reminder_1_minutes, reminder_2_minutes, silent_start, silent_end, timezone, enable_general_reminders, general_reminder_minutes')
         .eq('id', userId)
         .single()
 
@@ -77,6 +77,57 @@ export class ReminderService {
   }
 
   /**
+   * Schedule a general reminder after any reading
+   */
+  async scheduleGeneralReminder(
+    readingId: string,
+    userId: string,
+    readingTime: Date = new Date()
+  ): Promise<{ success: boolean; error?: string }> {
+    try {
+      // Check if notifications are enabled
+      if (!('Notification' in window) || Notification.permission !== 'granted') {
+        return { success: false, error: 'Notifications not enabled' }
+      }
+
+      // Get user preferences
+      const { data: profile } = await this.supabase
+        .from('profiles')
+        .select('enable_general_reminders, general_reminder_minutes, silent_start, silent_end')
+        .eq('id', userId)
+        .single()
+
+      if (!profile?.enable_general_reminders) {
+        return { success: true } // User has disabled general reminders
+      }
+
+      const reminderMinutes = profile.general_reminder_minutes || 120
+      const reminderTime = new Date(readingTime.getTime() + reminderMinutes * 60000)
+
+      // Adjust for silent hours
+      const adjustedReminderTime = this.adjustForSilentHours(
+        reminderTime,
+        profile.silent_start,
+        profile.silent_end
+      )
+
+      // Schedule the notification
+      await this.scheduleLocalNotification({
+        readingId,
+        userId,
+        reminderType: 'general',
+        scheduledTime: adjustedReminderTime,
+        readingType: 'general'
+      })
+
+      return { success: true }
+    } catch (error) {
+      console.error('Error scheduling general reminder:', error)
+      return { success: false, error: 'Failed to schedule reminder' }
+    }
+  }
+
+  /**
    * Schedule a local notification (browser-based)
    */
   private async scheduleLocalNotification(schedule: ReminderSchedule): Promise<void> {
@@ -112,19 +163,31 @@ export class ReminderService {
    * Show the actual reminder notification
    */
   private async showReminderNotification(schedule: ReminderSchedule): Promise<void> {
-    const timeLabel = schedule.reminderType === '30min' ? '30 minutes' : '90 minutes'
+    let timeLabel: string
+    let body: string
+    let type: string
+
+    if (schedule.reminderType === 'general') {
+      timeLabel = 'time'
+      body = "It's time to check your blood sugar again."
+      type = 'general-reminder'
+    } else {
+      timeLabel = schedule.reminderType === '30min' ? '30 minutes' : '90 minutes'
+      body = `It's been ${timeLabel} since your meal. Time to check your blood sugar.`
+      type = 'meal-reminder'
+    }
     
     const notification = new Notification('Blood Sugar Check Time! 📊', {
-      body: `It's been ${timeLabel} since your meal. Time to check your blood sugar.`,
-      icon: '/icons/icon-192x192.png',
-      badge: '/icons/icon-72x72.png',
+      body,
+      icon: '/web-app-manifest-192x192.png',
+      badge: '/web-app-manifest-192x192.png',
       tag: `reminder-${schedule.readingId}-${schedule.reminderType}`,
       requireInteraction: true,
       data: {
         readingId: schedule.readingId,
         mealId: schedule.mealId,
         readingType: schedule.readingType,
-        type: 'meal-reminder'
+        type
       }
     } as NotificationOptions)
 
