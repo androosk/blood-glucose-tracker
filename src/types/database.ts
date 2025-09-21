@@ -1,3 +1,12 @@
+export interface NotificationPayload {
+  title: string
+  body: string
+  icon?: string
+  badge?: string
+  tag?: string
+  data?: Record<string, string | number | boolean>
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -150,6 +159,41 @@ export interface Database {
           endpoint?: string
           p256dh?: string
           auth?: string
+          created_at?: string
+        }
+      }
+      scheduled_reminders: {
+        Row: {
+          id: string
+          user_id: string
+          reading_id: string
+          reminder_type: 'general' | 'post_meal_30' | 'post_meal_90'
+          scheduled_for: string
+          notification_payload: NotificationPayload
+          sent: boolean
+          sent_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          reading_id: string
+          reminder_type: 'general' | 'post_meal_30' | 'post_meal_90'
+          scheduled_for: string
+          notification_payload: NotificationPayload
+          sent?: boolean
+          sent_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          reading_id?: string
+          reminder_type?: 'general' | 'post_meal_30' | 'post_meal_90'
+          scheduled_for?: string
+          notification_payload?: NotificationPayload
+          sent?: boolean
+          sent_at?: string | null
           created_at?: string
         }
       }
