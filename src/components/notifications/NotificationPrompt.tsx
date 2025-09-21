@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Bell, BellOff, X } from 'lucide-react'
+import { pushSubscriptionManager } from '@/lib/push-subscription'
 
 interface NotificationPromptProps {
   onPermissionGranted?: () => void
@@ -42,11 +43,16 @@ export default function NotificationPrompt({
       setShowPrompt(false)
       
       if (permission === 'granted') {
+        // Register for push notifications
+        const subscription = await pushSubscriptionManager.subscribe()
+        
         // Test notification
         new Notification('Blood Sugar Tracker', {
-          body: 'Notifications enabled! You\'ll get reminders for your readings.',
-          icon: '/icons/icon-192x192.png',
-          badge: '/icons/icon-72x72.png'
+          body: subscription 
+            ? 'Push notifications enabled! You\'ll get reminders even when the app is closed.'
+            : 'Notifications enabled! You\'ll get reminders for your readings.',
+          icon: '/web-app-manifest-192x192.png',
+          badge: '/web-app-manifest-192x192.png'
         })
         onPermissionGranted?.()
       } else {

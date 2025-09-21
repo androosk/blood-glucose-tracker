@@ -77,7 +77,7 @@ export class ReminderService {
   }
 
   /**
-   * Schedule a general reminder after any reading
+   * Schedule a general reminder after any reading (server-side)
    */
   async scheduleGeneralReminder(
     readingId: string,
@@ -93,7 +93,7 @@ export class ReminderService {
       // Get user preferences
       const { data: profile } = await this.supabase
         .from('profiles')
-        .select('enable_general_reminders, general_reminder_minutes, silent_start, silent_end')
+        .select('enable_general_reminders, general_reminder_minutes')
         .eq('id', userId)
         .single()
 
@@ -102,23 +102,28 @@ export class ReminderService {
       }
 
       const reminderMinutes = profile.general_reminder_minutes || 120
-      const reminderTime = new Date(readingTime.getTime() + reminderMinutes * 60000)
 
-      // Adjust for silent hours
-      const adjustedReminderTime = this.adjustForSilentHours(
-        reminderTime,
-        profile.silent_start,
-        profile.silent_end
-      )
-
-      // Schedule the notification
-      await this.scheduleLocalNotification({
-        readingId,
-        userId,
-        reminderType: 'general',
-        scheduledTime: adjustedReminderTime,
-        readingType: 'general'
+      // Use server-side scheduling via Edge Function
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const response = await fetch(`${supabaseUrl}/functions/v1/schedule-reminder`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          userId,
+          readingId,
+          reminderMinutes,
+          readingTime: readingTime.toISOString()
+        }),
       })
+
+      const result = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to schedule reminder')
+      }
 
       return { success: true }
     } catch (error) {
