@@ -3,7 +3,7 @@ name: Send Scheduled Notifications
 on:
   schedule:
     # Runs every minute
-    - cron: "* * * * *"
+    - cron: "2/5 * * * *"
   workflow_dispatch: # Allows manual triggering
 
 jobs:
